@@ -15,7 +15,7 @@ import org.elasticsearch.client.RestHighLevelClient;
 public class MyClient {
     public static RestHighLevelClient get(){
         return new RestHighLevelClient(RestClient.builder(
-                new HttpHost("localhost", 9200, "http")
+                new HttpHost("192.168.0.104", 9200, "http")
         ));
     }
 }
