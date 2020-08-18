@@ -1,4 +1,4 @@
-package SmsLogDemo;
+package 文档检索;
 
 import Client.MyClient;
 import org.elasticsearch.action.search.SearchRequest;
@@ -13,29 +13,28 @@ import java.io.IOException;
 
 /***
  *@Author icepan
- *@Date 2020/8/17 上午10:45
+ *@Date 2020/8/17 上午10:50
  *@Description
  *
  ***/
 
 
-public class wildcard通配符查询 {
+public class range查询 {
     public static void main(String[] args) throws IOException {
-
         RestHighLevelClient client = MyClient.get();
 
         SearchRequest request = new SearchRequest("sms-logs");
 
-
         SearchSourceBuilder builder = new SearchSourceBuilder();
-        builder.query(QueryBuilders.wildcardQuery("corpName","?里"));
+
+        builder.query(QueryBuilders.rangeQuery("fee").gte("90").lte("100"));
 
         request.source(builder);
 
         SearchResponse response = client.search(request, RequestOptions.DEFAULT);
 
         for (SearchHit hit : response.getHits()) {
-            System.out.println(hit.getSourceAsMap().get("corpName"));
+            System.out.println(hit.getSourceAsMap());
         }
 
         client.close();

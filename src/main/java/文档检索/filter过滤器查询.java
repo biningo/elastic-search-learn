@@ -1,4 +1,4 @@
-package SmsLogDemo;
+package 文档检索;
 
 import Client.MyClient;
 import org.elasticsearch.action.search.SearchRequest;
@@ -13,44 +13,40 @@ import java.io.IOException;
 
 /***
  *@Author icepan
- *@Date 2020/8/17 上午10:32
+ *@Date 2020/8/17 下午7:11
  *@Description
  *
  ***/
 
 
-public class fuzzy查询 {
+public class filter过滤器查询 {
     public static void main(String[] args) throws IOException {
+
         RestHighLevelClient client = MyClient.get();
 
         SearchRequest request = new SearchRequest("sms-logs");
 
         SearchSourceBuilder builder = new SearchSourceBuilder();
 
-        builder.query(QueryBuilders.fuzzyQuery("smsContent","钟年人"));
+
+        builder.query(QueryBuilders.
+                boolQuery()
+                    .filter(
+                        QueryBuilders.termQuery("province", "上海")
+                    )
+                    .filter(
+                        QueryBuilders.rangeQuery("fee").lt(50)
+                    ));
 
         request.source(builder);
 
         SearchResponse response = client.search(request, RequestOptions.DEFAULT);
 
-
-        for (SearchHit hit : response.getHits()) {
-            System.out.println(hit.getSourceAsMap());
-        }
-
-
-        //指定profix_length
-        System.out.println("-----------------------------------");
-        builder.query(QueryBuilders.fuzzyQuery("smsContent","钟年人").prefixLength(1));
-
-        request.source(builder);
-
-        response = client.search(request,RequestOptions.DEFAULT);
-
-        for (SearchHit hit : response.getHits()) {
+        for (SearchHit hit : response.getHits().getHits()) {
             System.out.println(hit.getSourceAsMap());
         }
 
         client.close();
+
     }
 }

@@ -1,11 +1,10 @@
-package SmsLogDemo;
+package 文档检索;
 
 import Client.MyClient;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -14,13 +13,13 @@ import java.io.IOException;
 
 /***
  *@Author icepan
- *@Date 2020/8/17 下午6:28
+ *@Date 2020/8/17 下午2:58
  *@Description
  *
  ***/
 
 
-public class bool查询 {
+public class regexp查询 {
     public static void main(String[] args) throws IOException {
 
         RestHighLevelClient client = MyClient.get();
@@ -29,17 +28,13 @@ public class bool查询 {
 
         SearchSourceBuilder builder = new SearchSourceBuilder();
 
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-        boolQuery.must(QueryBuilders.termQuery("province","上海"));
-        boolQuery.mustNot(QueryBuilders.termQuery("corpName","电器"));
-
-        builder.query(boolQuery);
+        builder.query(QueryBuilders.regexpQuery("mobile","138[0-9]{8}"));
 
         request.source(builder);
 
         SearchResponse response = client.search(request, RequestOptions.DEFAULT);
 
-        for (SearchHit hit : response.getHits().getHits()) {
+        for (SearchHit hit : response.getHits()) {
             System.out.println(hit.getSourceAsMap());
         }
 

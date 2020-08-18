@@ -1,4 +1,4 @@
-package SmsLogDemo;
+package 文档检索;
 
 import Client.MyClient;
 import org.elasticsearch.client.RequestOptions;

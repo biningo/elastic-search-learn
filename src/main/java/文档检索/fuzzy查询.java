@@ -1,4 +1,4 @@
-package SmsLogDemo;
+package 文档检索;
 
 import Client.MyClient;
 import org.elasticsearch.action.search.SearchRequest;
@@ -13,13 +13,13 @@ import java.io.IOException;
 
 /***
  *@Author icepan
- *@Date 2020/8/17 上午10:50
+ *@Date 2020/8/17 上午10:32
  *@Description
  *
  ***/
 
 
-public class range查询 {
+public class fuzzy查询 {
     public static void main(String[] args) throws IOException {
         RestHighLevelClient client = MyClient.get();
 
@@ -27,11 +27,25 @@ public class range查询 {
 
         SearchSourceBuilder builder = new SearchSourceBuilder();
 
-        builder.query(QueryBuilders.rangeQuery("fee").gte("90").lte("100"));
+        builder.query(QueryBuilders.fuzzyQuery("smsContent","钟年人"));
 
         request.source(builder);
 
         SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+
+
+        for (SearchHit hit : response.getHits()) {
+            System.out.println(hit.getSourceAsMap());
+        }
+
+
+        //指定profix_length
+        System.out.println("-----------------------------------");
+        builder.query(QueryBuilders.fuzzyQuery("smsContent","钟年人").prefixLength(1));
+
+        request.source(builder);
+
+        response = client.search(request,RequestOptions.DEFAULT);
 
         for (SearchHit hit : response.getHits()) {
             System.out.println(hit.getSourceAsMap());
