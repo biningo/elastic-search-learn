@@ -1,28 +1,29 @@
-package 聚合查询;
+package 文档检索;
 
 import Client.MyClient;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.search.aggregations.Aggregation;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.metrics.Cardinality;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 
 import java.io.IOException;
 
 /***
  *@Author icepan
- *@Date 2020/8/18 上午9:32
+ *@Date 2020/8/22 下午3:09
  *@Description
  *
  ***/
 
 
-public class cardinality去重计数 {
+public class sort排序 {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
+
 
         RestHighLevelClient client = MyClient.get();
 
@@ -30,17 +31,21 @@ public class cardinality去重计数 {
 
         SearchSourceBuilder builder = new SearchSourceBuilder();
 
-        builder.aggregation(AggregationBuilders.cardinality("count-province").field("province"));
+        builder.sort("createTime", SortOrder.DESC).query(QueryBuilders.matchAllQuery());
+        builder.fetchSource(new String[]{"createTime","corpName"},null); //限制查询的字段
 
         request.source(builder);
 
+
         SearchResponse response = client.search(request, RequestOptions.DEFAULT);
 
-        //向下转型
-        Cardinality cardinality = response.getAggregations().get("count-province");
-        System.out.println(cardinality.getValue());
+        for (SearchHit hit : response.getHits().getHits()) {
+            //如果指定的sort的字段，则不会计算socre
+            System.out.println(hit.getSourceAsMap()+"  "+hit.getId()+" "+hit.getScore());
+        }
 
         client.close();
+
     }
 
 }
